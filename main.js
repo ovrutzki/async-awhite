@@ -56,8 +56,26 @@
 let data = [];
 let arrOfCards = [];
 let h1 = [];
-function getData() {
-  const response = fetch("https://restcountries.com/v2/all")
+const filter = document.getElementById("filter");
+
+let newUrl = "https://restcountries.com/v3.1/all";
+filter.addEventListener("change", async () => {
+  let value = document.getElementById("filter").value;
+  if (value === "all") {
+    console.log(value);
+    newUrl = `https://restcountries.com/v3.1/all`;
+    await countryMake();
+    return;
+  } else {
+    newUrl = `https://restcountries.com/v3.1/region/${value}`;
+    document.getElementById("countries").innerHTML = "";
+    await countryMake();
+  }
+});
+
+let apiUrl = `https://restcountries.com/v3.1/all`;
+function getData(url) {
+  const response = fetch(url)
     .then((response) => {
       return response.json();
     })
@@ -66,9 +84,9 @@ function getData() {
 }
 
 const countryMake = async () => {
-  data = await getData();
+  data = await getData(newUrl);
   const countries = document.getElementById("countries");
-
+  // window.location.reload();
   for (let i = 0; i < data.length; i++) {
     const card = document.createElement("div");
     card.className = "card";
@@ -80,7 +98,7 @@ const countryMake = async () => {
     flag.src = data[i].flags.svg;
     const name = document.createElement("h1");
     name.className = "name";
-    name.innerHTML = data[i].name;
+    name.innerHTML = data[i].name.common;
     const details = document.createElement("div");
     details.className = "details";
     const population = document.createElement("p");
@@ -88,6 +106,7 @@ const countryMake = async () => {
     population.innerHTML =
       "population: " + Intl.NumberFormat().format(data[i].population);
     const region = document.createElement("p");
+    region.id = "region";
     region.className = "detail";
     region.innerHTML = "Region: " + data[i].region;
     const capital = document.createElement("p");
@@ -114,5 +133,62 @@ const countryMake = async () => {
       }
     }
   }
+  let countryAtrributes = { region: [] };
+  const creatObjOfcountryAttrib = () => {
+    for (let index in data) {
+      let countryObj = data[index];
+      for (let countryKey in countryObj) {
+        if (countryKey === "region") {
+          let objAttKey = countryObj[countryKey];
+          let attValue = countryAtrributes[countryKey];
+          // let attributeOpt = attValue.find((e) => e === objAttKey);
+          if (attValue.find((e) => e === objAttKey) === undefined) {
+            attValue.push(objAttKey);
+          }
+        }
+      }
+    }
+  };
+  creatObjOfcountryAttrib();
+
+  function atrributeDropdown() {
+    // let newRegion = document.createElement("option");
+    // newRegion.value = "all";
+    // newRegion.className = "region";
+    // newRegion.innerHTML = "All";
+    // filter.appendChild(newRegion);
+
+    for (let i = 0; i < countryAtrributes.region.length; i++) {
+      let newRegion = document.createElement("option");
+      newRegion.value = countryAtrributes.region[i];
+      newRegion.className = "region";
+      newRegion.innerHTML = countryAtrributes.region[i];
+      if (countryAtrributes.region.find((e) => e !== newRegion.value))
+        filter.appendChild(newRegion);
+    }
+  }
+  atrributeDropdown();
+  // let options = document.querySelectorAll(".region");
+  // filter.addEventListener("change", regionFilter);
+  // function regionFilter() {
+  //   // e.preventDefault(e);
+  //   for (let i = 0; i < arrOfCards.length; i++) {
+  //     for (let j = 0; j < options.length; j++) {
+  //       // console.log(options[j]);
+  //       if (
+  //         region[i].textContent
+  //           .toLowerCase()
+  //           .includes(filter.value.toLowerCase())
+  //       ) {
+  //         arrOfCards[i].classList.remove("is-hidden1");
+  //       } else {
+  //         arrOfCards[i].classList.add("is-hidden1");
+  //       }
+  //     }
+  //   }
+  // }
 };
 countryMake();
+
+// https://restcountries.com/v3.1/all
+// https://restcountries.com/v3.1/region/{region}

@@ -14,7 +14,10 @@
         <div class="upper">
             <form action="">
                 <input type="text" id="search-input" placeholder="Search for a country...">
-                <button id="btn" class="search" type="button">Search</button>
+                <select name="dropdown" id="filter" aria-placeholder="Filter by Region">
+                    <option value="all" aria-placeholder="Filter by Region">Filter by Region</option> 
+                    <!-- <option value="all">All</option>  -->
+                </select>
             </form>
         </div>
         <div id="countries"></div>
