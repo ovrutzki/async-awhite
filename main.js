@@ -62,8 +62,8 @@ let newUrl = "https://restcountries.com/v3.1/all";
 filter.addEventListener("change", async () => {
   let value = document.getElementById("filter").value;
   if (value === "all") {
-    console.log(value);
     newUrl = `https://restcountries.com/v3.1/all`;
+    document.getElementById("countries").innerHTML = "";
     await countryMake();
     return;
   } else {
